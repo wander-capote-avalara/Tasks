@@ -1,5 +1,6 @@
 package task.rest;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -18,6 +19,7 @@ public class UserRest extends UtilRest {
 	
 	@POST
 	@Path("/add")
+	@Consumes("application/*")
 	@Produces("text/plain")
 	public Response add(String userparams) {
 		try {
