@@ -2,12 +2,21 @@ package task.rest;
 
 import java.io.StringWriter;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
 import org.codehaus.jackson.map.ObjectMapper;
 
 public class UtilRest {
 
+	@Context
+	HttpServletRequest request = null;
+
+	public int getUserId() {
+		return Integer.parseInt((String) request.getSession().getAttribute("id"));
+	}
+	
 	public Response buildResponse(Object result) {
 
 		StringWriter fw = new StringWriter();

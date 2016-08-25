@@ -11,33 +11,40 @@ $(document).ready(function() {
 	}	
 	
 	$("#register-submit").on("click", function(){		
-		var email = $("#register-form #email").val(),
+		var username = $("#register-form #username").val(),
+			email = $("#register-form #email").val(),
 			password = $("#register-form #password").val(),
 			confirm_password = $("#confirm-password").val();
 		
-		if(email == "" || !emailValidator){
+		if(username == ""){
+			alert("Insert a username!");
+			return false;
+		}else if(email == "" || !emailValidator){
 			alert("Email should be real!");
 			return false;
 		}else if(password == "" || password != confirm_password){
 			alert("Fields password and confirm password may match!");
 			return false;
-		}else{
-			alert("hellyeah");
-			
-			var newUser = {};
+		}else{			
+			var newUser = new Object();
 			
 			newUser.email = email;
 			newUser.password = password;
 			newUser.confirm_password = confirm_password;
+			newUser.username = username;
 			
-			$.ajax({
-				type:"POST",
-				url:"rest/user/add",
-				data:newUser
-			}).done(function(r){
-				alert(r);
-			})
+			cfg = {
+				url : "rest/user/add",
+				data : newUser,
+				success : function(r) {
+					alert(r);
+				},
+				error : function(err) {
+					alert(err.responseText);
+				}
+			};
 			
+			ajax.post(cfg);		
 		}
 	})
 	

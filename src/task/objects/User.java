@@ -10,6 +10,7 @@ public class User implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
 	private int id;
+	private String username;
 	private String email;
 	private String password;
 	private String confirm_password;
@@ -37,6 +38,12 @@ public class User implements Serializable{
 	}
 	public void setConfirm_password(String confirm_password) {
 		this.confirm_password = confirm_password;
+	}
+	public String getUsername() {
+		return username;
+	}
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 }

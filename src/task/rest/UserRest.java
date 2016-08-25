@@ -13,7 +13,11 @@ import task.rest.UtilRest;
 import task.services.UserService;
 
 @Path("user")
-public class UserRest extends UtilRest {
+public class UserRest extends UtilRest {	
+	
+	public UserRest(){
+		
+	}
 	
 	UserService us = new UserService();
 	
@@ -28,6 +32,19 @@ public class UserRest extends UtilRest {
 			return this.buildResponse("User added with success!");
 		} catch (Exception e) {
 			return this.buildErrorResponse("Error!");
+		}
+	}
+	
+	@POST
+	@Path("/getUserInfo")
+	@Produces("text/plain")
+	public Response getUserInfo() {
+		try {
+			Integer idUser = getUserId();
+			return idUser == null ? null : this.buildResponse(us.getUserInfo(idUser));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return this.buildErrorResponse(e.getMessage());
 		}
 	}
 }
