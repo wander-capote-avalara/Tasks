@@ -1,12 +1,16 @@
 package task.JDBC;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import task.objects.User;
+import task.objects.WI_Log;
 import task.objects.Work_Item;
 
 public class JDBCwiDAO {
@@ -62,5 +66,101 @@ public class JDBCwiDAO {
 			throw new Exception("Something went wrong with work itens!", e);
 		}
 		return wiList;
+	}
+
+	public void add(Work_Item wi) {
+		StringBuilder stbd = new StringBuilder();
+
+		stbd.append("INSERT INTO work_item (");
+		stbd.append("users_id, name, estimated_effort, description, ");
+		stbd.append("status, effort, deviation_percentage");
+		stbd.append(") VALUES (?,?,?,?,?,?,?)");
+
+		PreparedStatement p;
+		ResultSet rs = null;
+
+		try {
+			p = this.connection.prepareStatement(stbd.toString(), PreparedStatement.RETURN_GENERATED_KEYS);
+			p.setInt(1, wi.getUser().getId());
+			p.setString(2, wi.getName());
+			p.setTime(3, wi.getEstimated_effort());
+			p.setString(4, wi.getDescription());
+			p.setInt(5, wi.getStatus());
+			p.setTime(6, wi.getEffort());
+			p.setTime(7, wi.getDeviation_percentage());
+			p.execute();
+			rs = p.getGeneratedKeys();
+			if (rs.next())
+				wi.setId(rs.getInt(1));
+			
+			wILogAdd(wi);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}	
+	}
+
+	private void wILogAdd(Work_Item wi) {
+		try{			
+			StringBuilder stbd = new StringBuilder();
+
+			stbd.append("INSERT INTO wi_log (");
+			stbd.append("work_item_id, change_date, changed_status");
+			stbd.append(") VALUES (?,NOW(),?)");
+
+			PreparedStatement p;
+
+			try {
+				p = this.connection.prepareStatement(stbd.toString());
+				p.setInt(1, wi.getId());
+				p.setInt(2, wi.getStatus());
+				p.execute();
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public List<WI_Log> getWILogs(int id) throws Exception
+	{
+		StringBuilder stbd = new StringBuilder();
+		stbd.append("SELECT wl.id AS wlId, wl.work_item_id AS wlWI, ");
+		stbd.append("wl.change_date AS wlCD, wl.changed_status AS wlCS, wi.name AS wiN ");
+		stbd.append("FROM wi_log wl ");
+		stbd.append("INNER JOIN work_item wi ON wi.id = wl.work_item_id ");
+		if (id != 0) 
+			stbd.append("WHERE wl.id=?");
+
+		PreparedStatement p;
+		ResultSet rs = null;
+		List<WI_Log> wiLList = new ArrayList<WI_Log>();
+		SimpleDateFormat date = new SimpleDateFormat("dd-MM-yyyy");
+
+		try {
+			p = this.connection.prepareStatement(stbd.toString());
+			if (id != 0) 
+				p.setInt(1, id);
+			
+			rs = p.executeQuery();
+
+			while (rs.next()) {
+				WI_Log wiL = new WI_Log();
+				Work_Item wi = new Work_Item();
+				
+				wiL.setId(rs.getInt("wlId"));
+				wiL.setFormatedDate(date.format(rs.getDate("wlCD")).replace("-", "/"));
+				wiL.setChanged_status(rs.getInt("wlCS"));
+				wi.setName(rs.getString("wiN"));
+				
+				wiL.setWi(wi);
+				
+				wiLList.add(wiL);
+			}
+		} catch (Exception e) {
+			throw new Exception("Error!", e);
+		}
+		return wiLList;
 	}
 }

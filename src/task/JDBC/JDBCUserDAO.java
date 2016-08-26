@@ -35,7 +35,6 @@ public class JDBCUserDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	public User login(User user) throws Exception {

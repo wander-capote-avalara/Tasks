@@ -16,6 +16,7 @@ $(document).ready(function() {
 	getUserInfo();
 	setInterval(getUserInfo, 20000);
 	
+	
 	 var dataTable = $('#dataTable')
      .DataTable({
          aLengthMenu: [
@@ -67,16 +68,18 @@ $(document).ready(function() {
                  className: "center",
                  bSortable: false,
                  mRender: function(id) {
-                     return " <span><a class='link' data-toggle='modal' data-target='#Modal' onclick='edit("+id+
-                         ")'><i class='fa fa-pencil-square-o fa-lg' aria-hidden='true'></i></a></span>" +
-                         "<span><a class='link' data-toggle='modal' data-target='#Modal' onclick='showInfo("+id+
-                         ")'><i class='fa fa-info fa-lg' aria-hidden='true'></i></a></span>" +
-                         "<span><a class='link' onclick='showModal("+id+
-                         ")'><i class='fa fa-check-square-o fa-lg' aria-hidden='true'></i></a></span>";                
+                     return "<span><a class='link' data-toggle='modal' data-target='#Modal' onclick='edit("+id+")'><i class='fa fa-pencil-square-o fa-lg' aria-hidden='true'></i></a></span>" +
+                        "<span><a class='link' data-toggle='modal' data-target='#Modal' onclick='showLog("+id+")'><i class='fa fa-info fa-lg' aria-hidden='true'></i></a></span>" +
+                        "<span><a class='link' onclick='showModal("+id+")'><i class='fa fa-check-square-o fa-lg' aria-hidden='true'></i></a></span>";                
                  }
              }]
-             // # sourceURL=sourcees.coffeee
      });
+	 
+	 
+	function showLog(id){
+		$(".modal-title").html("Work Item Log")
+		$(".modal-body").load("wilog/index.html");
+	 }
 	 
 	 function getStatusName(name){
 		 switch(name){
