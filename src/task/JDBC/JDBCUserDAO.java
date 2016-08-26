@@ -97,17 +97,22 @@ public class JDBCUserDAO {
 		return user;
 	}
 	
-	public List<User> getUsers() throws Exception {
+	public List<User> getUsers(int id) throws Exception {
 		StringBuilder stbd = new StringBuilder();
 		stbd.append("SELECT id, email, username ");
 		stbd.append(" FROM users ");
+		if(id != 0)
+			stbd.append("WHERE id = ?");
 
 		PreparedStatement p;
 		ResultSet rs = null;
 		List<User> userList = new ArrayList<User>();
 
 		try {
-			p = this.connection.prepareStatement(stbd.toString());						
+			p = this.connection.prepareStatement(stbd.toString());
+			if(id != 0)
+				p.setInt(1, id);
+			
 			rs = p.executeQuery();
 
 			while (rs.next()) {

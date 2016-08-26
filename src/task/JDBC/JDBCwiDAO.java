@@ -16,14 +16,14 @@ public class JDBCwiDAO {
 		this.connection = connectionR;
 	}
 	
-	public List<Work_Item> getWIs(Integer id) throws Exception {
+	public List<Work_Item> getWIs(int id) throws Exception {
 		StringBuilder stbd = new StringBuilder();
-		stbd.append("SELECT wi.id As wiId, wi.users_id AS wiUserId, wi.name AS wiName, wi.estimated_effort AS wiEE ");
-		stbd.append("wi.description AS wiDesc, wi.status AS wiStatus, wi.effort AS wiE, wi.deviation_percentage AS wiDP ");
+		stbd.append("SELECT wi.id As wiId, wi.users_id AS wiUserId, wi.name AS wiName, wi.estimated_effort AS wiEE, ");
+		stbd.append("wi.description AS wiDesc, wi.status AS wiStatus, wi.effort AS wiE, wi.deviation_percentage AS wiDP, ");
 		stbd.append("u.id AS uId, u.username AS uUser, u.email AS uEmail ");
 		stbd.append("FROM work_item wi ");
 		stbd.append("LEFT JOIN users u ON u.id = wi.users_id ");
-		if(id != null)
+		if(id != 0)
 			stbd.append("WHERE wi.id = ?");
 
 		PreparedStatement p;
@@ -32,7 +32,7 @@ public class JDBCwiDAO {
 
 		try {
 			p = this.connection.prepareStatement(stbd.toString());
-			if(id != null)
+			if(id != 0)
 				p.setInt(1, id);
 			
 			rs = p.executeQuery();
@@ -43,7 +43,7 @@ public class JDBCwiDAO {
 				
 				wi.setId(rs.getInt("wiId"));
 				wi.setName(rs.getString("wiName"));
-				wi.setEffort(rs.getTime("wiEE"));
+				wi.setEstimated_effort(rs.getTime("wiEE"));
 				wi.setDescription(rs.getString("wiDesc"));
 				wi.setStatus(rs.getInt("wiStatus"));
 				wi.setEffort(rs.getTime("wiE"));
@@ -51,7 +51,7 @@ public class JDBCwiDAO {
 				
 				user.setId(rs.getInt("uId"));
 				user.setUsername(rs.getString("uUser"));
-				user.setEmail(rs.getString("uEmai"));
+				user.setEmail(rs.getString("uEmail"));
 				
 				wi.setUser(user);
 				

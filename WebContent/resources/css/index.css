@@ -1,0 +1,12 @@
+td{
+	max-width:30px !important;
+	word-wrap: break-word;
+}
+
+#dataTable span{
+	margin-right: 10px;
+}
+
+#formNewWI{
+	display:none;
+}

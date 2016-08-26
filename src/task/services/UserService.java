@@ -1,11 +1,14 @@
 package task.services;
 
 import java.sql.Connection;
+import java.util.List;
 
 import task.JDBC.JDBCUserDAO;
+import task.JDBC.JDBCwiDAO;
 import task.bd.connection.ConnectionTask;
 import task.helper.Helper;
 import task.objects.User;
+import task.objects.Work_Item;
 
 public class UserService {
 
@@ -28,6 +31,16 @@ public class UserService {
 		conec.closeConnection();
 
 		return user;
+	}
+
+	public List<User> getUsers(int id) throws Exception {
+		ConnectionTask connection = new ConnectionTask();
+		Connection connec = connection.openConnection();
+		JDBCUserDAO JDBCuserDAO = new JDBCUserDAO(connec);
+		List<User> uList = JDBCuserDAO.getUsers(id);
+		connection.closeConnection();
+
+		return uList;
 	}
 	
 }
