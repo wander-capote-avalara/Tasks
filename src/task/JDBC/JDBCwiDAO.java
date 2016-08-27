@@ -1,10 +1,8 @@
 package task.JDBC;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -70,7 +68,7 @@ public class JDBCwiDAO {
 
 	public void add(Work_Item wi) {
 		StringBuilder stbd = new StringBuilder();
-		if (wi.getId() != 0) {
+		if (wi.getId() == 0) {
 			stbd.append("INSERT INTO work_item (");
 			stbd.append("users_id, name, estimated_effort, description, ");
 			stbd.append("status, effort, deviation_percentage");
@@ -161,7 +159,7 @@ public class JDBCwiDAO {
 		stbd.append("FROM wi_log wl ");
 		stbd.append("INNER JOIN work_item wi ON wi.id = wl.work_item_id ");
 		if (id != 0)
-			stbd.append("WHERE wl.id=?");
+			stbd.append("WHERE wl.work_item_id=?");
 
 		PreparedStatement p;
 		ResultSet rs = null;
