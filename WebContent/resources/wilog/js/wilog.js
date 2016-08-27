@@ -18,11 +18,32 @@ $(function() {
 			data : "id",
 			className : "center"
 		}, {
+			data : "wi.name",
+			className : "center"
+		}, {
 			data : "formatedDate",
 			className : "center"
 		}, {
-			data : "changed_status",
-			className : "center"
+            data: "wi.status",
+            className: "center",
+            mRender: function(data) {
+                return getStatusName(data);
+            }
 		} ]
 	});
+	
+	 function getStatusName(name){
+		 switch(name){
+		 	case 0:
+		 		return "To do";
+		 	case 1:
+		 		return "In progress";
+		 	case 2:
+		 		return "Done";
+		 	case 3:
+		 		return "Stopped";
+		 	default:
+		 		return "Something went wrong";
+		 }
+	 }
 })

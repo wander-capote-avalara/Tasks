@@ -19,7 +19,7 @@ public class JDBCwiDAO {
 	public JDBCwiDAO(Connection connectionR) {
 		this.connection = connectionR;
 	}
-	
+
 	public List<Work_Item> getWIs(int id) throws Exception {
 		StringBuilder stbd = new StringBuilder();
 		stbd.append("SELECT wi.id As wiId, wi.users_id AS wiUserId, wi.name AS wiName, wi.estimated_effort AS wiEE, ");
@@ -27,7 +27,7 @@ public class JDBCwiDAO {
 		stbd.append("u.id AS uId, u.username AS uUser, u.email AS uEmail ");
 		stbd.append("FROM work_item wi ");
 		stbd.append("LEFT JOIN users u ON u.id = wi.users_id ");
-		if(id != 0)
+		if (id != 0)
 			stbd.append("WHERE wi.id = ?");
 
 		PreparedStatement p;
@@ -36,15 +36,15 @@ public class JDBCwiDAO {
 
 		try {
 			p = this.connection.prepareStatement(stbd.toString());
-			if(id != 0)
+			if (id != 0)
 				p.setInt(1, id);
-			
+
 			rs = p.executeQuery();
 
 			while (rs.next()) {
 				Work_Item wi = new Work_Item();
 				User user = new User();
-				
+
 				wi.setId(rs.getInt("wiId"));
 				wi.setName(rs.getString("wiName"));
 				wi.setEstimated_effort(rs.getTime("wiEE"));
@@ -52,13 +52,13 @@ public class JDBCwiDAO {
 				wi.setStatus(rs.getInt("wiStatus"));
 				wi.setEffort(rs.getTime("wiE"));
 				wi.setDeviation_percentage(rs.getTime("wiDP"));
-				
+
 				user.setId(rs.getInt("uId"));
 				user.setUsername(rs.getString("uUser"));
 				user.setEmail(rs.getString("uEmail"));
-				
+
 				wi.setUser(user);
-				
+
 				wiList.add(wi);
 			}
 
@@ -70,37 +70,68 @@ public class JDBCwiDAO {
 
 	public void add(Work_Item wi) {
 		StringBuilder stbd = new StringBuilder();
+		if (wi.getId() != 0) {
+			stbd.append("INSERT INTO work_item (");
+			stbd.append("users_id, name, estimated_effort, description, ");
+			stbd.append("status, effort, deviation_percentage");
+			stbd.append(") VALUES (?,?,?,?,?,?,?)");
 
-		stbd.append("INSERT INTO work_item (");
-		stbd.append("users_id, name, estimated_effort, description, ");
-		stbd.append("status, effort, deviation_percentage");
-		stbd.append(") VALUES (?,?,?,?,?,?,?)");
+			PreparedStatement p;
+			ResultSet rs = null;
 
-		PreparedStatement p;
-		ResultSet rs = null;
+			try {
+				p = this.connection.prepareStatement(stbd.toString(),
+						PreparedStatement.RETURN_GENERATED_KEYS);
+				p.setInt(1, wi.getUser().getId());
+				p.setString(2, wi.getName());
+				p.setTime(3, wi.getEstimated_effort());
+				p.setString(4, wi.getDescription());
+				p.setInt(5, wi.getStatus());
+				p.setTime(6, wi.getEffort());
+				p.setTime(7, wi.getDeviation_percentage());
+				p.execute();
+				rs = p.getGeneratedKeys();
+				if (rs.next())
+					wi.setId(rs.getInt(1));
 
-		try {
-			p = this.connection.prepareStatement(stbd.toString(), PreparedStatement.RETURN_GENERATED_KEYS);
-			p.setInt(1, wi.getUser().getId());
-			p.setString(2, wi.getName());
-			p.setTime(3, wi.getEstimated_effort());
-			p.setString(4, wi.getDescription());
-			p.setInt(5, wi.getStatus());
-			p.setTime(6, wi.getEffort());
-			p.setTime(7, wi.getDeviation_percentage());
-			p.execute();
-			rs = p.getGeneratedKeys();
-			if (rs.next())
-				wi.setId(rs.getInt(1));
+				wILogAdd(wi);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else {
+			stbd.append("UPDATE work_item SET ");
+			stbd.append("users_id=?, name=?, estimated_effort=?, description=?, ");
+			stbd.append("status=?, effort=?, deviation_percentage=? ");
+			stbd.append("WHERE id = ?");
 			
-			wILogAdd(wi);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}	
+			PreparedStatement p;
+			ResultSet rs = null;
+
+			try {
+				p = this.connection.prepareStatement(stbd.toString(),
+						PreparedStatement.RETURN_GENERATED_KEYS);
+				p.setInt(1, wi.getUser().getId());
+				p.setString(2, wi.getName());
+				p.setTime(3, wi.getEstimated_effort());
+				p.setString(4, wi.getDescription());
+				p.setInt(5, wi.getStatus());
+				p.setTime(6, wi.getEffort());
+				p.setTime(7, wi.getDeviation_percentage());
+				p.setInt(8, wi.getId());
+				p.execute();
+				rs = p.getGeneratedKeys();
+				if (rs.next())
+					wi.setId(rs.getInt(1));
+
+				wILogAdd(wi);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	private void wILogAdd(Work_Item wi) {
-		try{			
+		try {
 			StringBuilder stbd = new StringBuilder();
 
 			stbd.append("INSERT INTO wi_log (");
@@ -118,19 +149,18 @@ public class JDBCwiDAO {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}catch(Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
-	public List<WI_Log> getWILogs(int id) throws Exception
-	{
+
+	public List<WI_Log> getWILogs(int id) throws Exception {
 		StringBuilder stbd = new StringBuilder();
 		stbd.append("SELECT wl.id AS wlId, wl.work_item_id AS wlWI, ");
 		stbd.append("wl.change_date AS wlCD, wl.changed_status AS wlCS, wi.name AS wiN ");
 		stbd.append("FROM wi_log wl ");
 		stbd.append("INNER JOIN work_item wi ON wi.id = wl.work_item_id ");
-		if (id != 0) 
+		if (id != 0)
 			stbd.append("WHERE wl.id=?");
 
 		PreparedStatement p;
@@ -140,22 +170,23 @@ public class JDBCwiDAO {
 
 		try {
 			p = this.connection.prepareStatement(stbd.toString());
-			if (id != 0) 
+			if (id != 0)
 				p.setInt(1, id);
-			
+
 			rs = p.executeQuery();
 
 			while (rs.next()) {
 				WI_Log wiL = new WI_Log();
 				Work_Item wi = new Work_Item();
-				
+
 				wiL.setId(rs.getInt("wlId"));
-				wiL.setFormatedDate(date.format(rs.getDate("wlCD")).replace("-", "/"));
+				wiL.setFormatedDate(date.format(rs.getDate("wlCD")).replace(
+						"-", "/"));
 				wiL.setChanged_status(rs.getInt("wlCS"));
 				wi.setName(rs.getString("wiN"));
-				
+
 				wiL.setWi(wi);
-				
+
 				wiLList.add(wiL);
 			}
 		} catch (Exception e) {

@@ -68,8 +68,8 @@ $(document).ready(function() {
                  className: "center",
                  bSortable: false,
                  mRender: function(id) {
-                     return "<span><a class='link' data-toggle='modal' data-target='#Modal' onclick='edit("+id+")'><i class='fa fa-pencil-square-o fa-lg' aria-hidden='true'></i></a></span>" +
-                        "<span><a class='link' data-toggle='modal' data-target='#Modal' onclick='showLog("+id+")'><i class='fa fa-info fa-lg' aria-hidden='true'></i></a></span>" +
+                     return "<span><a class='link' data-toggle='modal' data-target='#Modal' onclick='"+edit(id)+"'><i class='fa fa-pencil-square-o fa-lg' aria-hidden='true'></i></a></span>" +
+                        "<span><a class='link' data-toggle='modal' data-target='#Modal' onclick='"+showLog(id)+"'><i class='fa fa-info fa-lg' aria-hidden='true'></i></a></span>" +
                         "<span><a class='link' onclick='showModal("+id+")'><i class='fa fa-check-square-o fa-lg' aria-hidden='true'></i></a></span>";                
                  }
              }]
@@ -80,6 +80,11 @@ $(document).ready(function() {
 		$(".modal-title").html("Work Item Log")
 		$(".modal-body").load("wilog/index.html");
 	 }
+	
+	function edit(id){
+		$(".modal-title").html("Edit Work Item");
+		$(".modal-body").load("wi/index.html");	
+	}
 	 
 	 function getStatusName(name){
 		 switch(name){
