@@ -7,6 +7,6 @@ td{
 	margin-right: 10px;
 }
 
-.id{
-	display:none;
+#wiFilter{
+	width:22% !important;
 }

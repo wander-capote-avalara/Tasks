@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class JDBCwiDAO {
 		stbd.append("FROM work_item wi ");
 		stbd.append("LEFT JOIN users u ON u.id = wi.users_id ");
 		stbd.append("WHERE wi.users_id = ? ");
-		if (id != 0 || userId != 0)
+		if (id != 0)
 			stbd.append("AND wi.id = ? ");
 
 
@@ -139,29 +140,19 @@ public class JDBCwiDAO {
 	}
 
 	private void insertDeviation(Work_Item wi) throws Exception {		
-		try {
-			
-			SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
-			Date obj1 = formatter.parse(wi.getEstimated_effort().toString());
-			Date obj2 = formatter.parse(wi.getEffort().toString());
-			long diff = obj1.getTime() - obj2.getTime();
-			
-			
-			wi.getEstimated_effort();
-			
+		try {					
 			StringBuilder stbd = new StringBuilder();
 
-			stbd.append("INSERT INTO work_item (");
-			stbd.append("deviation_percentage");
-			stbd.append(") VALUES (?) ");
+			stbd.append("UPDATE work_item SET ");
+			stbd.append("deviation_percentage = ? ");
 			stbd.append("WHERE id=?");
 
 			PreparedStatement p;
 
 			try {
 				p = this.connection.prepareStatement(stbd.toString());
-				p.setInt(1, wi.getId());
-				p.setTime(2, wi.getEffort());
+				p.setString(1, getTimeDifference(wi));
+				p.setInt(2, wi.getId());
 				p.execute();
 
 			} catch (Exception e) {
@@ -170,6 +161,23 @@ public class JDBCwiDAO {
 		} catch (Exception e) {
 			throw new Exception("Error while adding work item log");
 		}
+	}
+
+	private String getTimeDifference(Work_Item wi) {
+		Date date1 = new Date(wi.getEstimated_effort().getTime());
+		Date date2 = new Date(wi.getEffort().getTime());
+		Calendar calendar = Calendar.getInstance();
+		
+		calendar.setTime(date1);
+		int hours1 = calendar.get(Calendar.HOUR_OF_DAY);
+		int minutes1 = calendar.get(Calendar.MINUTE);
+		
+		calendar.setTime(date2);
+		int differenceH = calendar.get(Calendar.HOUR_OF_DAY) - hours1;
+		int differenceM = calendar.get(Calendar.MINUTE) - minutes1;
+
+		String Str = new String(differenceH+":"+differenceM+":00");
+		return Str.replace("-", "");
 	}
 
 	private void wILogAdd(Work_Item wi) throws Exception {

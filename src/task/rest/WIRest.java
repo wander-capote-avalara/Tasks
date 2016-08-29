@@ -6,6 +6,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 import org.codehaus.jackson.map.ObjectMapper;
@@ -26,9 +27,9 @@ public class WIRest extends UtilRest {
 	@GET
 	@Path("getWIs/{id}")
 	@Produces("text/plain")
-	public Response getWIs(@PathParam("id") int id) {
+	public Response getWIs(@QueryParam("id") int id, @QueryParam("status") int status) {
 		try {
-			return this.buildResponse(wis.getWIs(id, getUserId()));
+			return this.buildResponse(wis.getWIs(id, getUserId(), status));
 		} catch (Exception e) {
 			return this.buildErrorResponse(e.getMessage());
 		}
