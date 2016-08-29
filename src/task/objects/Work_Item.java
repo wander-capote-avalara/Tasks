@@ -17,7 +17,7 @@ public class Work_Item implements Serializable{
 	private String description;
 	private int status;
 	private Time effort;
-	private Time deviation_percentage;
+	private String deviation_percentage;
 	
 	
 	public int getId() {
@@ -62,10 +62,10 @@ public class Work_Item implements Serializable{
 	public void setEffort(Time effort) {
 		this.effort = effort;
 	}
-	public Time getDeviation_percentage() {
+	public String getDeviation_percentage() {
 		return deviation_percentage;
 	}
-	public void setDeviation_percentage(Time deviation_percentage) {
+	public void setDeviation_percentage(String deviation_percentage) {
 		this.deviation_percentage = deviation_percentage;
 	}
 

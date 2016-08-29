@@ -13,6 +13,20 @@ function getStatusName(name) {
     }
 }
 
+function doneWi(wi){
+	 $(".modal-title").html("Confirm work item")
+	 $(".modal-body").load("wi/confirm.html", function() {
+	        $("#id").val(wi[0].id);
+	        $("#selectUser").val(wi[0].user.id);
+	        $("#wiName").val(wi[0].name);
+	        $("#eEffort").val(wi[0].estimated_effort);
+	        $("#wiDesc").val(wi[0].description);
+	        $("#effort").val(wi[0].effort == "00:00:00" ? "" : wi[0].effort);
+	        $("#dPercentage").val(wi[0].deviation_percentage);
+	 })
+	 $("#wiFilter").Attr("disabled", "disabled");
+}
+
 function showLog(id) {
     $(".modal-title").html("Work Item Log")
     $(".modal-body").load("wilog/index.html", function() {
@@ -54,22 +68,23 @@ function showLog(id) {
     });
 }
 
-function edit(id) {
-    $(".modal-title").html("Edit Work Item");
+function edit(id, isEdit) {
     var cfg = {
         type: "GET",
-        url: "../rest/wi/getWIs/?id=" + id,
+        url: "../rest/wi/getWIs/?id="+id+"&status="+4+"&showAll="+false,
         success: function(wi) {
-            loadEdit(wi);
+           isEdit ? loadEdit(wi) : doneWi(wi);
         },
         error: function(e) {
             alert(e);
         }
     };
+	 $("#wiFilter").removeAttr("disabled"); 
     ajax.post(cfg);
 }
 
 function loadEdit(wi) {
+    $(".modal-title").html("Edit Work Item");
     $(".modal-body").load("wi/index.html", function() {
         $("#id").val(wi[0].id);
         $("#selectUser").val(wi[0].user.id);
@@ -78,7 +93,7 @@ function loadEdit(wi) {
         $("#wiDesc").val(wi[0].description);
         $("#wiStatus").val(wi[0].status);
         $("#effort").val(wi[0].effort == "00:00:00" ? "" : wi[0].effort);
-        $("#dPercentage").val(wi[0].deviation_percentage == "00:00:00" ? "" : wi[0].deviation_percentage);
+        $("#dPercentage").val(wi[0].deviation_percentage);
     });
 }
 
@@ -99,15 +114,18 @@ $(document).ready(function() {
     }
     getUserInfo();
     setInterval(getUserInfo, 20000);
-
+    
+    $("#allWI").on("click",function(){
+    	dataTable.ajax.url("../rest/wi/getWIs/?id="+0+"&status="+4+"&showAll="+true);
+        dataTable.ajax.reload(null, true);
+    })
 
     $("#wiFilter").change(function(){
-        showWiWithFilter(this.value);
+        dataTable.ajax.url("../rest/wi/getWIs/?id="+0+"&status="+this.value+"&showAll="+false);
+        dataTable.ajax.reload(null, true);
     })
     
-    function showWiWithFilter(status){
-    
-	    var dataTable = $('#dataTable')
+	    window.dataTable = $('#dataTable')
 	        .DataTable({
 	            aLengthMenu: [
 	                [10, 20, 100],
@@ -118,7 +136,7 @@ $(document).ready(function() {
 	            sPaginationType: "full_numbers",
 	            processing: true,
 	            ajax: {
-	                url: "../rest/wi/getWIs/?id="+0+"&status="+status,
+	                url: "../rest/wi/getWIs/?id="+0+"&status="+0+"&showAll="+false,
 	                type: "GET"
 	            },
 	            select: {
@@ -157,13 +175,13 @@ $(document).ready(function() {
 	                className: "center",
 	                bSortable: false,
 	                mRender: function(id) {
-	                    return "<span><a class='link' data-toggle='modal' data-target='#Modal' onclick='edit(" + id + ")'><i class='fa fa-pencil-square-o fa-lg' aria-hidden='true'></i></a></span>" +
-	                        "<span><a class='link' data-toggle='modal' data-target='#Modal' onclick='showLog(" + id + ")'><i class='fa fa-info fa-lg' aria-hidden='true'></i></a></span>";
+	                    return "<span><a class='link' title='Edit work item' data-toggle='modal' data-target='#Modal' onclick='edit("+id+","+true+")'><i class='fa fa-pencil-square-o fa-lg' aria-hidden='true'></i></a></span>" +
+	                        "<span><a class='link'  title='Show work item log' data-toggle='modal' data-target='#Modal' onclick='showLog("+id+")'><i class='fa fa-info fa-lg' aria-hidden='true'></i></a></span>"+
+	                        "<span><a class='link'  title='Confirm work item' data-toggle='modal' data-target='#Modal' onclick='edit("+id+","+false+")'><i class='fa fa-check-square-o fa-lg' aria-hidden='true'></i></a></span>"
+	                        ;
 	                }
 	            }]
 	        });
-    }
-    showWiWithFilter(33);
 
     $("#newWI").on("click", function() {
         $(".modal-title").html("New Work item")

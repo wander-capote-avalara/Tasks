@@ -20,7 +20,7 @@ $(document).ready(function() {
 	
 	var url = document.URL.split('?')[1];
 	if(url == "invalid")
-		Command: toastr["error"]("Private area", "Error");
+		Command: toastr["error"]("Private area!", "Error");
 	else if(url == "incorrect")
 		Command: toastr["error"]("Email or password incorrect!", "Error");
 	
@@ -40,13 +40,8 @@ $(document).ready(function() {
 	});
 	
     function emailValidator(email) {
-        if (email.indexOf("@") == -1 || email.indexOf(".") == -1 ||
-            email.indexOf("@") == 0 ||
-            email.lastIndexOf(".") + 1 == email.length ||
-            (email.indexOf("@") + 1 == email.indexOf("."))) {
-            return false;
-        }
-        return true;
+    	var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    	return re.test(email) ? true : false;
     }
 
     $("#register-submit").on("click", function() {
@@ -56,13 +51,13 @@ $(document).ready(function() {
             confirm_password = $("#confirm-password").val();
 
         if (username == "") {
-            alert("Insert a username!");
+        	Command: toastr["error"]("Insert a username!", "Error");
             return false;
-        } else if (email == "" || !emailValidator) {
-            alert("Email should be real!");
+        } else if (!emailValidator(email)) {
+        	Command: toastr["error"]("Insert a valid email!", "Error");
             return false;
         } else if (password == "" || password != confirm_password) {
-            alert("Fields password and confirm password may match!");
+        	Command: toastr["error"]("Fields password and confirm password may match!", "Error");
             return false;
         } else {
             var newUser = new Object();

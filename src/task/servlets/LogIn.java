@@ -1,6 +1,7 @@
 package task.servlets;
 
 import java.sql.Connection;
+
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,6 +28,9 @@ public class LogIn extends HttpServlet{
 		User user = new User();
 		try {
 			String context = request.getServletContext().getContextPath();
+			if(user.getEmail() == "" || user.getPassword() == "")
+				throw new Exception("Fill in the fields correctly!");
+
 			user.setEmail(request.getParameter("email"));
 			user.setPassword(Helper.hasher(request.getParameter("password")));
 
@@ -46,7 +50,7 @@ public class LogIn extends HttpServlet{
 				response.sendRedirect(context + "/index.html?incorrect");
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new Exception(e.getMessage());
 		}
 	}
 

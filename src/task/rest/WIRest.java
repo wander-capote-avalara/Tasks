@@ -25,11 +25,11 @@ public class WIRest extends UtilRest {
 	WIService wis = new WIService();
 
 	@GET
-	@Path("getWIs/{id}")
+	@Path("getWIs/")
 	@Produces("text/plain")
-	public Response getWIs(@QueryParam("id") int id, @QueryParam("status") int status) {
+	public Response getWIs(@QueryParam("id") int id, @QueryParam("status") int status, @QueryParam("showAll") boolean showAll) {
 		try {
-			return this.buildResponse(wis.getWIs(id, getUserId(), status));
+			return this.buildResponse(wis.getWIs(id, getUserId(), status, showAll));
 		} catch (Exception e) {
 			return this.buildErrorResponse(e.getMessage());
 		}

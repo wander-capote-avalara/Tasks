@@ -1,0 +1,22 @@
+<form id="newWIForm">
+        <input type="hidden" id="id">
+        <input type="hidden"id="selectUser">
+        <input type="hidden" id="wiName" >
+    <div class="form-group">
+        <label for="eEffort">Estimated effort</label> <input type="time" class="form-control" id="eEffort" placeholder="In hours" required>
+    </div>
+    <div class="form-group">
+        <label for="wiStatus">Status</label> 
+        <select id="wiStatus" class="form-control" disabled>
+			<option value='2'>Done</option>
+		</select>
+    </div>
+    <div class="form-group">
+        <label for="effort">Effort</label> <input type="time" class="form-control" id="effort" placeholder="In hours">
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save</button>
+    </div>
+</form>
+<script src="wi/js/wi.js"></script>

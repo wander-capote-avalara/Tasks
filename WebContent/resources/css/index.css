@@ -1,5 +1,5 @@
 td{
-	max-width:30px !important;
+	max-width:10px !important;
 	word-wrap: break-word;
 }
 
@@ -8,5 +8,9 @@ td{
 }
 
 #wiFilter{
-	width:22% !important;
+	width:16% !important;
+}
+
+ul li{
+	cursor:pointer;
 }

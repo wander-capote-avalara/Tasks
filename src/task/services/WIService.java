@@ -10,11 +10,11 @@ import task.objects.Work_Item;
 
 public class WIService {
 
-	public List<Work_Item> getWIs(int id, int userId, int status) throws Exception {
+	public List<Work_Item> getWIs(int id, int userId, int status, boolean showAll) throws Exception {
 		ConnectionTask connection = new ConnectionTask();
 		Connection connec = connection.openConnection();
 		JDBCwiDAO jdbcWI = new JDBCwiDAO(connec);
-		List<Work_Item> WIList = jdbcWI.getWIs(id, userId);
+		List<Work_Item> WIList = jdbcWI.getWIs(id, userId, status, showAll);
 		connection.closeConnection();
 
 		return WIList;

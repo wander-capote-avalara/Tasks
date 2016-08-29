@@ -20,16 +20,19 @@ public class JDBCwiDAO {
 		this.connection = connectionR;
 	}
 
-	public List<Work_Item> getWIs(int id, int userId) throws Exception {
+	public List<Work_Item> getWIs(int id, int userId, int status, boolean showAll) throws Exception {
 		StringBuilder stbd = new StringBuilder();
 		stbd.append("SELECT wi.id As wiId, wi.users_id AS wiUserId, wi.name AS wiName, wi.estimated_effort AS wiEE, ");
-		stbd.append("wi.description AS wiDesc, wi.status AS wiStatus, wi.effort AS wiE, wi.deviation_percentage AS wiDP, ");
-		stbd.append("u.id AS uId, u.username AS uUser, u.email AS uEmail ");
+		stbd.append("wi.description AS wiDesc, wi.status AS wiStatus, wi.effort AS wiE,  ");
+		stbd.append("u.id AS uId, u.username AS uUser, u.email AS uEmail, ");
+		stbd.append("cast((effort*100)/estimated_effort as decimal(16,2)) as percentage ");
 		stbd.append("FROM work_item wi ");
 		stbd.append("LEFT JOIN users u ON u.id = wi.users_id ");
-		stbd.append("WHERE wi.users_id = ? ");
+		stbd.append(!showAll ? "WHERE wi.users_id = ? ":"WHERE 1=1 ");
 		if (id != 0)
 			stbd.append("AND wi.id = ? ");
+		if(status != 4)
+			stbd.append("AND wi.status ="+status);
 
 
 		PreparedStatement p;
@@ -38,7 +41,8 @@ public class JDBCwiDAO {
 
 		try {
 			p = this.connection.prepareStatement(stbd.toString());
-			p.setInt(1, userId);
+			if (!showAll)
+				p.setInt(1, userId);
 			if (id != 0)
 				p.setInt(2, id);
 
@@ -54,7 +58,7 @@ public class JDBCwiDAO {
 				wi.setDescription(rs.getString("wiDesc"));
 				wi.setStatus(rs.getInt("wiStatus"));
 				wi.setEffort(rs.getTime("wiE"));
-				wi.setDeviation_percentage(rs.getTime("wiDP"));
+				wi.setDeviation_percentage("%"+rs.getString("percentage"));
 
 				user.setId(rs.getInt("uId"));
 				user.setUsername(rs.getString("uUser"));
@@ -76,8 +80,8 @@ public class JDBCwiDAO {
 		if (wi.getId() == 0) {
 			stbd.append("INSERT INTO work_item (");
 			stbd.append("users_id, name, estimated_effort, description, ");
-			stbd.append("status, effort, deviation_percentage");
-			stbd.append(") VALUES (?,?,?,?,?,?,?)");
+			stbd.append("status, effort");
+			stbd.append(") VALUES (?,?,?,?,?,?)");
 
 			PreparedStatement p;
 			ResultSet rs = null;
@@ -91,23 +95,19 @@ public class JDBCwiDAO {
 				p.setString(4, wi.getDescription());
 				p.setInt(5, wi.getStatus());
 				p.setTime(6, wi.getEffort());
-				p.setTime(7, wi.getDeviation_percentage());
 				p.execute();
 				rs = p.getGeneratedKeys();
 				if (rs.next())
 					wi.setId(rs.getInt(1));
 
-				wILogAdd(wi);
-				
-				if(!wi.getEffort().equals("00:00:00"))
-					insertDeviation(wi);				
+				wILogAdd(wi);			
 			} catch (Exception e) {
 				throw new Exception("Error while adding work item!");
 			}
 		} else {
 			stbd.append("UPDATE work_item SET ");
 			stbd.append("users_id=?, name=?, estimated_effort=?, description=?, ");
-			stbd.append("status=?, effort=?, deviation_percentage=? ");
+			stbd.append("status=?, effort=? ");
 			stbd.append("WHERE id = ?");
 			
 			PreparedStatement p;
@@ -122,62 +122,17 @@ public class JDBCwiDAO {
 				p.setString(4, wi.getDescription());
 				p.setInt(5, wi.getStatus());
 				p.setTime(6, wi.getEffort());
-				p.setTime(7, wi.getDeviation_percentage());
-				p.setInt(8, wi.getId());
+				p.setInt(7, wi.getId());
 				p.execute();
 				rs = p.getGeneratedKeys();
 				if (rs.next())
 					wi.setId(rs.getInt(1));
 
-				wILogAdd(wi);
-				
-				if(!wi.getEffort().equals("00:00:00"))
-					insertDeviation(wi);
+				wILogAdd(wi);				
 			} catch (Exception e) {
 				throw new Exception("Error while editing work item!");
 			}
 		}
-	}
-
-	private void insertDeviation(Work_Item wi) throws Exception {		
-		try {					
-			StringBuilder stbd = new StringBuilder();
-
-			stbd.append("UPDATE work_item SET ");
-			stbd.append("deviation_percentage = ? ");
-			stbd.append("WHERE id=?");
-
-			PreparedStatement p;
-
-			try {
-				p = this.connection.prepareStatement(stbd.toString());
-				p.setString(1, getTimeDifference(wi));
-				p.setInt(2, wi.getId());
-				p.execute();
-
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		} catch (Exception e) {
-			throw new Exception("Error while adding work item log");
-		}
-	}
-
-	private String getTimeDifference(Work_Item wi) {
-		Date date1 = new Date(wi.getEstimated_effort().getTime());
-		Date date2 = new Date(wi.getEffort().getTime());
-		Calendar calendar = Calendar.getInstance();
-		
-		calendar.setTime(date1);
-		int hours1 = calendar.get(Calendar.HOUR_OF_DAY);
-		int minutes1 = calendar.get(Calendar.MINUTE);
-		
-		calendar.setTime(date2);
-		int differenceH = calendar.get(Calendar.HOUR_OF_DAY) - hours1;
-		int differenceM = calendar.get(Calendar.MINUTE) - minutes1;
-
-		String Str = new String(differenceH+":"+differenceM+":00");
-		return Str.replace("-", "");
 	}
 
 	private void wILogAdd(Work_Item wi) throws Exception {

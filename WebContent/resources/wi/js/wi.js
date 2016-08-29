@@ -56,11 +56,16 @@ $(document).ready(function() {
             newWI.description = $("#wiDesc").val(),
             newWI.status = $("#wiStatus").val(),
             newWI.effort = getDates($("#effort").val()),
-            newWI.deviation_percentage = getDates($("#dPercentage").val());
 	        
         msg = requiredWI(newWI);
-        if(msg != "")
+        if(msg != ""){
+        	Command: toastr["error"](msg, "Error");
         	return false;
+        }else if(newWI.estimated_effort >= "23:59:59" || newWI.effort >= "23:59:59"){
+        	Command: toastr["error"]("Time can't be higher than 24 Hours", "Error");
+    		return false;
+        	
+        }
         
         var cfg = {
             type: "POST",
@@ -69,6 +74,7 @@ $(document).ready(function() {
             success: function(msg) {
         		Command: toastr["success"](msg, "Success");
                 $("#newWIForm .btn-default").click();
+                window.dataTable.ajax.reload(null, false);
             },
             error: function(e) {
         		Command: toastr["error"](e.responseText, "Error");
@@ -90,11 +96,11 @@ $(document).ready(function() {
 
 
     $("#wiStatus").change(function() {
-            if (this.value == "2")
-                $("#effort").removeAttr("disabled")
-            else
-                $("#effort").attr("disabled", "disabled");
-        })
+       if (this.value == "2")
+    	   $("#effort").removeAttr("disabled")
+       else
+    	   $("#effort").attr("disabled", "disabled");
+     })
         
     function requiredWI(wi){
     	var msg="";
