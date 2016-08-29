@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import task.objects.User;
@@ -18,15 +19,17 @@ public class JDBCwiDAO {
 		this.connection = connectionR;
 	}
 
-	public List<Work_Item> getWIs(int id) throws Exception {
+	public List<Work_Item> getWIs(int id, int userId) throws Exception {
 		StringBuilder stbd = new StringBuilder();
 		stbd.append("SELECT wi.id As wiId, wi.users_id AS wiUserId, wi.name AS wiName, wi.estimated_effort AS wiEE, ");
 		stbd.append("wi.description AS wiDesc, wi.status AS wiStatus, wi.effort AS wiE, wi.deviation_percentage AS wiDP, ");
 		stbd.append("u.id AS uId, u.username AS uUser, u.email AS uEmail ");
 		stbd.append("FROM work_item wi ");
 		stbd.append("LEFT JOIN users u ON u.id = wi.users_id ");
-		if (id != 0)
-			stbd.append("WHERE wi.id = ?");
+		stbd.append("WHERE wi.users_id = ? ");
+		if (id != 0 || userId != 0)
+			stbd.append("AND wi.id = ? ");
+
 
 		PreparedStatement p;
 		ResultSet rs = null;
@@ -34,8 +37,9 @@ public class JDBCwiDAO {
 
 		try {
 			p = this.connection.prepareStatement(stbd.toString());
+			p.setInt(1, userId);
 			if (id != 0)
-				p.setInt(1, id);
+				p.setInt(2, id);
 
 			rs = p.executeQuery();
 
@@ -66,7 +70,7 @@ public class JDBCwiDAO {
 		return wiList;
 	}
 
-	public void add(Work_Item wi) {
+	public void add(Work_Item wi) throws Exception {
 		StringBuilder stbd = new StringBuilder();
 		if (wi.getId() == 0) {
 			stbd.append("INSERT INTO work_item (");
@@ -93,8 +97,11 @@ public class JDBCwiDAO {
 					wi.setId(rs.getInt(1));
 
 				wILogAdd(wi);
+				
+				if(!wi.getEffort().equals("00:00:00"))
+					insertDeviation(wi);				
 			} catch (Exception e) {
-				e.printStackTrace();
+				throw new Exception("Error while adding work item!");
 			}
 		} else {
 			stbd.append("UPDATE work_item SET ");
@@ -122,13 +129,50 @@ public class JDBCwiDAO {
 					wi.setId(rs.getInt(1));
 
 				wILogAdd(wi);
+				
+				if(!wi.getEffort().equals("00:00:00"))
+					insertDeviation(wi);
 			} catch (Exception e) {
-				e.printStackTrace();
+				throw new Exception("Error while editing work item!");
 			}
 		}
 	}
 
-	private void wILogAdd(Work_Item wi) {
+	private void insertDeviation(Work_Item wi) throws Exception {		
+		try {
+			
+			SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+			Date obj1 = formatter.parse(wi.getEstimated_effort().toString());
+			Date obj2 = formatter.parse(wi.getEffort().toString());
+			long diff = obj1.getTime() - obj2.getTime();
+			
+			
+			wi.getEstimated_effort();
+			
+			StringBuilder stbd = new StringBuilder();
+
+			stbd.append("INSERT INTO work_item (");
+			stbd.append("deviation_percentage");
+			stbd.append(") VALUES (?) ");
+			stbd.append("WHERE id=?");
+
+			PreparedStatement p;
+
+			try {
+				p = this.connection.prepareStatement(stbd.toString());
+				p.setInt(1, wi.getId());
+				p.setTime(2, wi.getEffort());
+				p.execute();
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} catch (Exception e) {
+			throw new Exception("Error while adding work item log");
+		}
+	}
+
+	private void wILogAdd(Work_Item wi) throws Exception {
 		try {
 			StringBuilder stbd = new StringBuilder();
 
@@ -148,7 +192,7 @@ public class JDBCwiDAO {
 				e.printStackTrace();
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new Exception("Error while adding work item log");
 		}
 	}
 

@@ -1,5 +1,44 @@
 $(document).ready(function() {
-
+	
+	toastr.options = {
+			"closeButton" : true,
+			"debug" : false,
+			"newestOnTop" : false,
+			"progressBar" : false,
+			"positionClass" : "toast-top-center",
+			"preventDuplicates" : false,
+			"onclick" : null,
+			"showDuration" : "300",
+			"hideDuration" : "1000",
+			"timeOut" : "5000",
+			"extendedTimeOut" : "1000",
+			"showEasing" : "swing",
+			"hideEasing" : "linear",
+			"showMethod" : "fadeIn",
+			"hideMethod" : "fadeOut"
+		}
+	
+	var url = document.URL.split('?')[1];
+	if(url == "invalid")
+		Command: toastr["error"]("Private area", "Error");
+	else if(url == "incorrect")
+		Command: toastr["error"]("Email or password incorrect!", "Error");
+	
+    $('#login-form-link').click(function(e) {
+		$("#login-form").delay(100).fadeIn(100);
+ 		$("#register-form").fadeOut(100);
+		$('#register-form-link').removeClass('active');
+		$(this).addClass('active');
+		e.preventDefault();
+	});
+	$('#register-form-link').click(function(e) {
+		$("#register-form").delay(100).fadeIn(100);
+ 		$("#login-form").fadeOut(100);
+		$('#login-form-link').removeClass('active');
+		$(this).addClass('active');
+		e.preventDefault();
+	});
+	
     function emailValidator(email) {
         if (email.indexOf("@") == -1 || email.indexOf(".") == -1 ||
             email.indexOf("@") == 0 ||
@@ -37,10 +76,11 @@ $(document).ready(function() {
                 url: "rest/user/add",
                 data: newUser,
                 success: function(r) {
-                    alert(r);
+            		Command: toastr["success"](r, "Success");
+            		document.getElementById("register-form").reset();
                 },
                 error: function(err) {
-                    alert(err.responseText);
+                	Command: toastr["error"](err.responseText, "Error");
                 }
             };
 

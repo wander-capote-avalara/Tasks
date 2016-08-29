@@ -1,15 +1,10 @@
 package task.servlets;
 
 import java.sql.Connection;
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import com.google.gson.Gson;
 
 import task.JDBC.JDBCUserDAO;
 import task.bd.connection.ConnectionTask;
@@ -47,10 +42,8 @@ public class LogIn extends HttpServlet{
 				session.setAttribute("email", Helper.hasher(userExists.getEmail()));
 
 				response.sendRedirect(context + "/resources/index.html");
-			} else {
-				session.setAttribute("msg", "Wrong password and/or email!");
-				
-				response.sendRedirect(context + "/index.html");
+			} else {				
+				response.sendRedirect(context + "/index.html?incorrect");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

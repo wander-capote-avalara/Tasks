@@ -10,17 +10,17 @@ import task.objects.Work_Item;
 
 public class WIService {
 
-	public List<Work_Item> getWIs(int id) throws Exception {
+	public List<Work_Item> getWIs(int id, int userId) throws Exception {
 		ConnectionTask connection = new ConnectionTask();
 		Connection connec = connection.openConnection();
 		JDBCwiDAO jdbcWI = new JDBCwiDAO(connec);
-		List<Work_Item> WIList = jdbcWI.getWIs(id);
+		List<Work_Item> WIList = jdbcWI.getWIs(id, userId);
 		connection.closeConnection();
 
 		return WIList;
 	}
 
-	public void add(Work_Item wi) {
+	public void add(Work_Item wi) throws Exception {
 		ConnectionTask connection = new ConnectionTask();
 		Connection connec = connection.openConnection();
 		JDBCwiDAO jdbcWI = new JDBCwiDAO(connec);

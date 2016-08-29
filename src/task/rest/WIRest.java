@@ -28,7 +28,7 @@ public class WIRest extends UtilRest {
 	@Produces("text/plain")
 	public Response getWIs(@PathParam("id") int id) {
 		try {
-			return this.buildResponse(wis.getWIs(id));
+			return this.buildResponse(wis.getWIs(id, getUserId()));
 		} catch (Exception e) {
 			return this.buildErrorResponse(e.getMessage());
 		}

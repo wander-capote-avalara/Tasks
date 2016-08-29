@@ -16,7 +16,7 @@ public class JDBCUserDAO {
 		this.connection = connectionR;
 	}
 
-	public void add(User user) {
+	public void add(User user) throws Exception {
 		StringBuilder stbd = new StringBuilder();
 
 		stbd.append("INSERT INTO users (");
@@ -33,7 +33,28 @@ public class JDBCUserDAO {
 			p.execute();
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new Exception("Error while adding user!");
+		}
+	}
+	
+	public boolean checkEmail(String email) throws Exception{
+		StringBuilder stbd = new StringBuilder();
+		stbd.append("SELECT email ");
+		stbd.append("FROM users ");
+		stbd.append("WHERE email = ?");
+
+		PreparedStatement p;
+		ResultSet rs = null;
+
+		try {
+			p = this.connection.prepareStatement(stbd.toString());
+			p.setString(1, email);
+			
+			rs = p.executeQuery();
+
+			return rs.next() ? true : false;
+		} catch (Exception e) {
+			throw new Exception("Error while searching for email!", e);
 		}
 	}
 
@@ -62,7 +83,7 @@ public class JDBCUserDAO {
 			}
 
 		} catch (Exception e) {
-			throw new Exception("Erro ao pesquisar usuário!", e);
+			throw new Exception("Error while searching for user!", e);
 		}
 		return userExist;
 	}
@@ -91,7 +112,7 @@ public class JDBCUserDAO {
 			}
 
 		} catch (Exception e) {
-			throw new Exception("Erro ao pesquisar usuário!", e);
+			throw new Exception("Error while searching for user!", e);
 		}
 		return user;
 	}
@@ -123,7 +144,7 @@ public class JDBCUserDAO {
 			}
 
 		} catch (Exception e) {
-			throw new Exception("Erro ao pesquisar usuários!", e);
+			throw new Exception("Error while searching for users!", e);
 		}
 		return userList;
 	}

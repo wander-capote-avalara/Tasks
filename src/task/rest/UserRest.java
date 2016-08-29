@@ -32,7 +32,7 @@ public class UserRest extends UtilRest {
 			us.add(user);
 			return this.buildResponse("User added with success!");
 		} catch (Exception e) {
-			return this.buildErrorResponse("Error!");
+			return this.buildErrorResponse(e.getMessage().toString());
 		}
 	}
 	

@@ -43,4 +43,13 @@
 		<servlet-name>LogOut</servlet-name>
 		<url-pattern>/LogOut</url-pattern>
 	</servlet-mapping>
+	
+	<filter>
+		<filter-name>PrivateFilter</filter-name>
+		<filter-class>task.servlets.PrivateFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>PrivateFilter</filter-name>
+		<url-pattern>/resources/*</url-pattern>
+	</filter-mapping>
 </web-app>
