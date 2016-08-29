@@ -5,15 +5,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
+import task.jdbcinterface.WiDAO;
 import task.objects.User;
 import task.objects.WI_Log;
 import task.objects.Work_Item;
 
-public class JDBCwiDAO {
+public class JDBCwiDAO implements WiDAO{
 	private Connection connection;
 
 	public JDBCwiDAO(Connection connectionR) {

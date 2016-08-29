@@ -6,9 +6,10 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import task.jdbcinterface.UserDAO;
 import task.objects.User;
 
-public class JDBCUserDAO {
+public class JDBCUserDAO implements UserDAO{
 
 	private Connection connection;
 
