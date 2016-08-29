@@ -73,8 +73,8 @@ $(document).ready(function() {
             data: newWI,
             success: function(msg) {
         		Command: toastr["success"](msg, "Success");
-                $("#newWIForm .btn-default").click();
                 window.dataTable.ajax.reload(null, false);
+                document.getElementById("newWIForm").reset();
             },
             error: function(e) {
         		Command: toastr["error"](e.responseText, "Error");

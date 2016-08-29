@@ -58,7 +58,7 @@ public class JDBCwiDAO {
 				wi.setDescription(rs.getString("wiDesc"));
 				wi.setStatus(rs.getInt("wiStatus"));
 				wi.setEffort(rs.getTime("wiE"));
-				wi.setDeviation_percentage("%"+rs.getString("percentage"));
+				wi.setDeviation_percentage(rs.getString("percentage")+"%");
 
 				user.setId(rs.getInt("uId"));
 				user.setUsername(rs.getString("uUser"));

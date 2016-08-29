@@ -22,7 +22,9 @@ public class PrivateFilter implements Filter{
 
 		try {			
 			HttpSession session = ((HttpServletRequest) request).getSession();
-
+			((HttpServletResponse) response).setHeader("Cache-Control", "no-store, no-store, must-revalidate");
+			((HttpServletResponse) response).setHeader("Cache-Control", "no-store");
+			
 			if (((HttpServletRequest) request).getRequestURI().equals(context) || session.getAttribute("id") != null) {
 				chain.doFilter(request, response);
 			} else {

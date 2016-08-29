@@ -24,7 +24,6 @@ function doneWi(wi){
 	        $("#effort").val(wi[0].effort == "00:00:00" ? "" : wi[0].effort);
 	        $("#dPercentage").val(wi[0].deviation_percentage);
 	 })
-	 $("#wiFilter").Attr("disabled", "disabled");
 }
 
 function showLog(id) {
@@ -79,7 +78,6 @@ function edit(id, isEdit) {
             alert(e);
         }
     };
-	 $("#wiFilter").removeAttr("disabled"); 
     ajax.post(cfg);
 }
 
@@ -118,6 +116,13 @@ $(document).ready(function() {
     $("#allWI").on("click",function(){
     	dataTable.ajax.url("../rest/wi/getWIs/?id="+0+"&status="+4+"&showAll="+true);
         dataTable.ajax.reload(null, true);
+    	$("#wiFilter").attr("disabled", "disabled");
+    })
+    
+    $("#aTM").on("click", function(){
+    	 dataTable.ajax.url("../rest/wi/getWIs/?id="+0+"&status="+0+"&showAll="+false);
+         dataTable.ajax.reload(null, true);
+     	$("#wiFilter").removeAttr("disabled");
     })
 
     $("#wiFilter").change(function(){
