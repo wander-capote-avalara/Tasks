@@ -1,5 +1,4 @@
 $(document).ready(function() {
-	
 	toastr.options = {
 			"closeButton" : true,
 			"debug" : false,
@@ -32,16 +31,25 @@ $(document).ready(function() {
 
     function showUsers(listUser) {
         var html = "<select id='selectUser' class='form-control' required>";
-        if (listUser == null || listUser.lenght == 0) {
+        if (listUser == null || listUser.lenght == 0) 
             html += "<option value='0'>No users</option>";
-        } else {
-        	 html += "<option value='' selected></option>";
-            for (var x = 0; x < listUser.length; x++) {
-                html += "<option value=" + listUser[x].id + ">" + listUser[x].username + "</option>";
-            }
+        else {
+        	 //html += "<option value='' selected></option>";
+            for (var x = 0; x < listUser.length; x++)
+                html += "<option value=" + listUser[x].id +">" + listUser[x].username + "</option>";         
         }
         html += "</select>";
         $("#selectUsers").html(html);
+        
+    	if(wiG){
+	        $("#id").val(wiG[0].id);
+	        $("#selectUser").val(wiG[0].user.id);
+	        $("#wiName").val(wiG[0].name);
+	        $("#eEffort").val(wiG[0].estimated_effort);
+	        $("#wiDesc").val(wiG[0].description);
+	        $("#effort").val(wiG[0].effort == "00:00:00" ? "" : wiG[0].effort);
+	        $("#dPercentage").val(wiG[0].deviation_percentage);
+    	}
     }
 
 
@@ -73,7 +81,7 @@ $(document).ready(function() {
             data: newWI,
             success: function(msg) {
         		Command: toastr["success"](msg, "Success");
-                window.dataTable.ajax.reload(null, false);
+                dataTable.ajax.reload(null, false);
                 document.getElementById("newWIForm").reset();
             },
             error: function(e) {

@@ -1,3 +1,4 @@
+var wiG, dataTable;
 function getStatusName(name) {
     switch (name) {
         case 0:
@@ -68,7 +69,6 @@ function showLog(id) {
 }
 
 function edit(id, isEdit) {
-	alert(id);
     var cfg = {
         type: "GET",
         url: "../rest/wi/getWIs/?id="+id+"&status="+4+"&showAll="+false,
@@ -83,17 +83,9 @@ function edit(id, isEdit) {
 }
 
 function loadEdit(wi) {
+	wiG = wi; 
     $(".modal-title").html("Edit Work Item");
-    $(".modal-body").load("wi/index.html", function() {
-        $("#id").val(wi[0].id);
-        $("#selectUser").val(wi[0].user.id);
-        $("#wiName").val(wi[0].name);
-        $("#eEffort").val(wi[0].estimated_effort);
-        $("#wiDesc").val(wi[0].description);
-        $("#wiStatus").val(wi[0].status);
-        $("#effort").val(wi[0].effort == "00:00:00" ? "" : wi[0].effort);
-        $("#dPercentage").val(wi[0].deviation_percentage);
-    });
+    $(".modal-body").load("wi/index.html");
 }
 
 $(document).ready(function() {
@@ -115,19 +107,9 @@ $(document).ready(function() {
     setInterval(getUserInfo, 20000);
     
     $("#allWI").on("click",function(){
-    	dataTable.ajax.url("../rest/wi/getWIs/?id="+0+"&status="+4+"&showAll="+true);
-        dataTable.ajax.reload(null, true);
+    	$(".modal-body").load("index.html");
+    	
     	$("#wiFilter").attr("disabled", "disabled");
-    	$(".more").addClass('hidden');
-     	$(".moreAll").removeClass('hidden');
-    })
-    
-    $("#aTM").on("click", function(){
-    	 dataTable.ajax.url("../rest/wi/getWIs/?id="+0+"&status="+0+"&showAll="+false);
-         dataTable.ajax.reload(null, true);
-     	$("#wiFilter").removeAttr("disabled");
-     	$(".more").removeClass('hidden');
-    	$(".moreAll").addClass('hidden');
     })
 
     $("#wiFilter").change(function(){
@@ -135,7 +117,7 @@ $(document).ready(function() {
         dataTable.ajax.reload(null, true);
     })
     
-	    window.dataTable = $('#dataTable')
+	    dataTable = $('#dataTable')
 	        .DataTable({
 	            aLengthMenu: [
 	                [10, 20, 100],
@@ -185,10 +167,9 @@ $(document).ready(function() {
 	                className: "center",
 	                bSortable: false,
 	                mRender: function(id) {
-	                    return "<span class='more'><a class='link' title='Edit work item' data-toggle='modal' data-target='#Modal' onclick='edit("+id+","+true+")'><i class='fa fa-pencil-square-o fa-lg' aria-hidden='true'></i></a></span>" +
-	                        "<span class='more'><a class='link'  title='Show work item log' data-toggle='modal' data-target='#Modal' onclick='showLog("+id+")'><i class='fa fa-info fa-lg' aria-hidden='true'></i></a></span>"+
-	                        "<span class='more'><a class='link'  title='Confirm work item' data-toggle='modal' data-target='#Modal' onclick='edit("+id+","+false+")'><i class='fa fa-check-square-o fa-lg' aria-hidden='true'></i></a></span>"+
-	                        "<span class='hidden moreAll'><i class='fa fa-ban fa-lg' title='Not editable!' aria-hidden='true'></i></span>";
+	                    return "<span><a class='link' title='Edit work item' data-toggle='modal' data-target='#Modal' onclick='edit("+id+","+true+")'><i class='fa fa-pencil-square-o fa-lg' aria-hidden='true'></i></a></span>" +
+	                        "<span><a class='link'  title='Show work item log' data-toggle='modal' data-target='#Modal' onclick='showLog("+id+")'><i class='fa fa-info fa-lg' aria-hidden='true'></i></a></span>"+
+	                        "<span><a class='link'  title='Confirm work item' data-toggle='modal' data-target='#Modal' onclick='edit("+id+","+false+")'><i class='fa fa-check-square-o fa-lg' aria-hidden='true'></i></a></span>";
 	                }
 	            }]
 	        });
