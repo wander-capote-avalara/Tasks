@@ -68,6 +68,7 @@ function showLog(id) {
 }
 
 function edit(id, isEdit) {
+	alert(id);
     var cfg = {
         type: "GET",
         url: "../rest/wi/getWIs/?id="+id+"&status="+4+"&showAll="+false,
@@ -75,7 +76,7 @@ function edit(id, isEdit) {
            isEdit ? loadEdit(wi) : doneWi(wi);
         },
         error: function(e) {
-            alert(e);
+            alert(e.responseText);
         }
     };
     ajax.post(cfg);
@@ -117,12 +118,16 @@ $(document).ready(function() {
     	dataTable.ajax.url("../rest/wi/getWIs/?id="+0+"&status="+4+"&showAll="+true);
         dataTable.ajax.reload(null, true);
     	$("#wiFilter").attr("disabled", "disabled");
+    	$(".more").addClass('hidden');
+     	$(".moreAll").removeClass('hidden');
     })
     
     $("#aTM").on("click", function(){
     	 dataTable.ajax.url("../rest/wi/getWIs/?id="+0+"&status="+0+"&showAll="+false);
          dataTable.ajax.reload(null, true);
      	$("#wiFilter").removeAttr("disabled");
+     	$(".more").removeClass('hidden');
+    	$(".moreAll").addClass('hidden');
     })
 
     $("#wiFilter").change(function(){
@@ -180,10 +185,10 @@ $(document).ready(function() {
 	                className: "center",
 	                bSortable: false,
 	                mRender: function(id) {
-	                    return "<span><a class='link' title='Edit work item' data-toggle='modal' data-target='#Modal' onclick='edit("+id+","+true+")'><i class='fa fa-pencil-square-o fa-lg' aria-hidden='true'></i></a></span>" +
-	                        "<span><a class='link'  title='Show work item log' data-toggle='modal' data-target='#Modal' onclick='showLog("+id+")'><i class='fa fa-info fa-lg' aria-hidden='true'></i></a></span>"+
-	                        "<span><a class='link'  title='Confirm work item' data-toggle='modal' data-target='#Modal' onclick='edit("+id+","+false+")'><i class='fa fa-check-square-o fa-lg' aria-hidden='true'></i></a></span>"
-	                        ;
+	                    return "<span class='more'><a class='link' title='Edit work item' data-toggle='modal' data-target='#Modal' onclick='edit("+id+","+true+")'><i class='fa fa-pencil-square-o fa-lg' aria-hidden='true'></i></a></span>" +
+	                        "<span class='more'><a class='link'  title='Show work item log' data-toggle='modal' data-target='#Modal' onclick='showLog("+id+")'><i class='fa fa-info fa-lg' aria-hidden='true'></i></a></span>"+
+	                        "<span class='more'><a class='link'  title='Confirm work item' data-toggle='modal' data-target='#Modal' onclick='edit("+id+","+false+")'><i class='fa fa-check-square-o fa-lg' aria-hidden='true'></i></a></span>"+
+	                        "<span class='hidden moreAll'><i class='fa fa-ban fa-lg' title='Not editable!' aria-hidden='true'></i></span>";
 	                }
 	            }]
 	        });

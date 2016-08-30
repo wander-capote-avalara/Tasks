@@ -14,3 +14,7 @@ td{
 ul li{
 	cursor:pointer;
 }
+
+.hidden{
+	display:none;
+}

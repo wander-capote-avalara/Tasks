@@ -33,8 +33,9 @@ $(document).ready(function() {
     function showUsers(listUser) {
         var html = "<select id='selectUser' class='form-control' required>";
         if (listUser == null || listUser.lenght == 0) {
-            html += "<option value='0'>No users</option>"
+            html += "<option value='0'>No users</option>";
         } else {
+        	 html += "<option value='' selected></option>";
             for (var x = 0; x < listUser.length; x++) {
                 html += "<option value=" + listUser[x].id + ">" + listUser[x].username + "</option>";
             }
@@ -63,8 +64,7 @@ $(document).ready(function() {
         	return false;
         }else if(newWI.estimated_effort >= "23:59:59" || newWI.effort >= "23:59:59"){
         	Command: toastr["error"]("Time can't be higher than 24 Hours", "Error");
-    		return false;
-        	
+    		return false;      	
         }
         
         var cfg = {
@@ -103,17 +103,15 @@ $(document).ready(function() {
      })
         
     function requiredWI(wi){
-    	var msg="";
-    	
-    	if(+wi.user == 0)
-    		msg+="Select a user;";
+    	var msg="";  	
+    	if(wi.user.id == "")
+    		msg+="Select a user!";
     	else if(wi.name == "")
-    		msg+="Insert a work item name;";
+    		msg+="Insert a work item name!";
     	else if(wi.estimated_effort == "00:00:00")
-    		msg+="Insert a valid estimated effort;";
+    		msg+="Insert a valid estimated effort!";
     	else if(wi.status == 2 && wi.effort == "00:00:00")
-    		msg+="Insert a valid effort time;";
-    			
+    		msg+="Insert a valid effort time!";  			
     	return msg;
     }
     
