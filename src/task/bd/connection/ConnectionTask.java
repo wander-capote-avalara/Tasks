@@ -10,7 +10,7 @@ public class ConnectionTask {
 		try {
 			Class.forName("org.gjt.mm.mysql.Driver");
 			connectionTask = java.sql.DriverManager
-					.getConnection("jdbc:mysql://localhost:3306/taskdb", "root", "root");
+					.getConnection("jdbc:mysql://localhost:3306/taskdb", "root", "");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
