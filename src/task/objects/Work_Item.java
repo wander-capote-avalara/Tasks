@@ -2,6 +2,8 @@ package task.objects;
 
 import java.io.Serializable;
 import java.sql.Time;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 public class Work_Item implements Serializable{
 
@@ -63,10 +65,12 @@ public class Work_Item implements Serializable{
 		this.effort = effort;
 	}
 	public String getDeviation_percentage() {
-		return deviation_percentage;
-	}
-	public void setDeviation_percentage(String deviation_percentage) {
-		this.deviation_percentage = deviation_percentage;
+		try{
+			return new DecimalFormat("##.##").format(Double.parseDouble(this.effort.toString().replace(":", ""))*100/Double.parseDouble(this.estimated_effort.toString().replace(":", ""))).toString()+"%";
+		}catch(Exception e){
+			return "0%";
+		}
+		
 	}
 
 }

@@ -3,9 +3,9 @@ package task.services;
 import java.sql.Connection;
 import java.util.List;
 
-import task.JDBC.JDBCUserDAO;
 import task.bd.connection.ConnectionTask;
 import task.helper.Helper;
+import task.jdbc.JDBCUserDAO;
 import task.objects.User;
 
 public class UserService {

@@ -1,4 +1,4 @@
-package task.JDBC;
+package task.jdbc;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -23,8 +23,8 @@ public class JDBCwiDAO implements WiDAO{
 		StringBuilder stbd = new StringBuilder();
 		stbd.append("SELECT wi.id As wiId, wi.users_id AS wiUserId, wi.name AS wiName, wi.estimated_effort AS wiEE, ");
 		stbd.append("wi.description AS wiDesc, wi.status AS wiStatus, wi.effort AS wiE,  ");
-		stbd.append("u.id AS uId, u.username AS uUser, u.email AS uEmail, ");
-		stbd.append("cast((effort*100)/estimated_effort as decimal(16,2)) as percentage ");
+		stbd.append("u.id AS uId, u.username AS uUser, u.email AS uEmail ");
+		//stbd.append("cast((effort*100)/estimated_effort as decimal(16,2)) as percentage ");
 		stbd.append("FROM work_item wi ");
 		stbd.append("LEFT JOIN users u ON u.id = wi.users_id ");
 		stbd.append(!showAll ? "WHERE wi.users_id = ? ":"WHERE 1=1 ");
@@ -57,8 +57,7 @@ public class JDBCwiDAO implements WiDAO{
 				wi.setDescription(rs.getString("wiDesc"));
 				wi.setStatus(rs.getInt("wiStatus"));
 				wi.setEffort(rs.getTime("wiE"));
-				wi.setDeviation_percentage(rs.getString("percentage")+"%");
-
+				//wi.setDeviation_percentage(rs.getString("percentage")+"%");
 				user.setId(rs.getInt("uId"));
 				user.setUsername(rs.getString("uUser"));
 				user.setEmail(rs.getString("uEmail"));
@@ -140,7 +139,7 @@ public class JDBCwiDAO implements WiDAO{
 
 			stbd.append("INSERT INTO wi_log (");
 			stbd.append("work_item_id, change_date, changed_status");
-			stbd.append(") VALUES (?,NOW(),?)");
+			stbd.append(") VALUES (?,current_date,?)");
 
 			PreparedStatement p;
 

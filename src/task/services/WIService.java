@@ -3,8 +3,8 @@ package task.services;
 import java.sql.Connection;
 import java.util.List;
 
-import task.JDBC.JDBCwiDAO;
 import task.bd.connection.ConnectionTask;
+import task.jdbc.JDBCwiDAO;
 import task.objects.WI_Log;
 import task.objects.Work_Item;
 

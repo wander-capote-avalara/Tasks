@@ -7,9 +7,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import task.JDBC.JDBCUserDAO;
 import task.bd.connection.ConnectionTask;
 import task.helper.Helper;
+import task.jdbc.JDBCUserDAO;
 import task.objects.User;
 
 public class LogIn extends HttpServlet{

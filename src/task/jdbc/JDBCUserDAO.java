@@ -1,4 +1,4 @@
-package task.JDBC;
+package task.jdbc;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
