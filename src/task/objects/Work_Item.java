@@ -3,7 +3,6 @@ package task.objects;
 import java.io.Serializable;
 import java.sql.Time;
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 
 public class Work_Item implements Serializable{
 
@@ -19,6 +18,7 @@ public class Work_Item implements Serializable{
 	private String description;
 	private int status;
 	private Time effort;
+	@SuppressWarnings("unused")
 	private String deviation_percentage;
 	
 	
@@ -70,7 +70,6 @@ public class Work_Item implements Serializable{
 		}catch(Exception e){
 			return "0%";
 		}
-		
 	}
 
 }
