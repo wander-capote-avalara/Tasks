@@ -57,7 +57,7 @@ $(document).ready(function() {
         	Command: toastr["error"]("Insert a valid email!", "Error");
             return false;
         } else if (password == "" || password != confirm_password) {
-        	Command: toastr["error"]("Fields password and confirm password may match!", "Error");
+        	Command: toastr["error"]("Fields password and confirm password must match!", "Error");
             return false;
         } else {
             var newUser = new Object();

@@ -1,4 +1,4 @@
-var wiG, dataTable;
+var dataTable;
 function getStatusName(name) {
     switch (name) {
         case 0:
@@ -83,9 +83,17 @@ function edit(id, isEdit) {
 }
 
 function loadEdit(wi) {
-	wiG = wi; 
     $(".modal-title").html("Edit Work Item");
-    $(".modal-body").load("wi/index.html");
+    $(".modal-body").load("wi/index.html", function(){
+    	$("#id").val(wi[0].id);
+        $("#selectUser").val(wi[0].user.id);
+        $("#wiName").val(wi[0].name);
+        $("#eEffort").val(wi[0].estimated_effort);
+        $("#wiDesc").val(wi[0].description);
+        $("#wiStatus").val(wi[0].status);
+        $("#effort").val(wi[0].effort == "00:00:00" ? "" : wi[0].effort);
+        $("#dPercentage").val(wi[0].deviation_percentage);
+    });
 }
 
 $(document).ready(function() {
